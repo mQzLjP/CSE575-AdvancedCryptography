@@ -1,0 +1,57 @@
+\chapter{Introduction}
+
+A classic methodology for a cryptography problem is described as:
+
+\begin{enumerate}
+	\item Form a realistic model of the problem (i.e. what does the ``honest'' parties want and what ``adversary'' can do).
+	\item Define the desired functionality of the system and the security properties against the adversary.
+	\item Construct and analyze a solution, and ideally prove that it satisfies the definition mentioned in the previous step (under some assumptions).
+\end{enumerate}
+
+\section{A Secret-Writing Example}
+
+Following the methodology above, we consider a simple secret-writing problem. Alice wants to send a secret message to Bob over an insecure channel, where Eve can eavesdrop on the communication. The goal is to ensure that Eve cannot learn anything about the message.
+
+\subsection{No Secret Given}
+
+\begin{enumerate}
+	\item Modeling: both Alice and Bob are honest parties. The adversaries are essentially algorithms:
+	      \begin{itemize}
+		      \item Alice is the encoder with algorithm $\text{Enc}: M \to C$, where $M$ is the finite message space and $C$ is the finite ciphertext space.
+		      \item Bob is the decoder with algorithm $\text{Dec}: C \to M$.
+		      \item Eve is the eavesdropper with algorithm $\text{E}: C \to \text{???}$.
+	      \end{itemize}
+	\item Functionality and Security:
+	      \begin{itemize}
+		      \item Correctness: $\text{Dec}(\text{Enc}(m)) = m$ for all $m \in M$.
+		      \item Security (secrecy of the message): $\text{E}(\text{Enc}(m))$ should not reveal any information about $m$ for any adversary $\text{E}$.
+		            However, as Bob is honest, no one can stop Eve from setting $\text{E} = \text{Dec}$. In this way, $\text{E}(\text{Enc}(m)) = m$ from the correctness.
+	      \end{itemize}
+\end{enumerate}
+
+As the first attempt fails, we need to modify the model:
+\begin{remark}
+	We can introduce a key to distinguish the honest parties from the adversary.
+\end{remark}
+
+\subsection{Secret Key}
+
+In Attempt 2, we distinguish the honest parties by introducing a secret key $k$ shared between Alice and Bob. The model is modified as follows:
+
+\begin{enumerate}
+	\item Modeling:
+	      \begin{itemize}
+		      \item $\text{KeyGen}: \emptyset \to K$, where $K$ is the finite key space. This is a randomized algorithm that outputs a key $k \in K$.
+		      \item Alice is the encoder with algorithm $\text{Enc}: K \times M \to C$ (potentially randomized)
+		      \item Bob is the decoder with algorithm $\text{Dec}: K\times C \to M$.
+	      \end{itemize}
+	\item Functionality and Security:
+	      \begin{itemize}
+		      \item Correctness: $\text{Dec}(k,\text{Enc}(k,m)) = m$ for all $m \in M$ and $k \in K$. This implies Alice and Bob must share the same key $k$.
+		      \item Security: Eve doesn't know about $k$, so he has to try every possible key $k' \in K$ to decode the ciphertext. However, different keys may lead to different messages, so Eve cannot be sure about the original message $m$.
+	      \end{itemize}
+\end{enumerate}
+\begin{note}
+	The $\text{Dec}$ can't be randomized as it needs to give a deterministic output with probability 1.
+\end{note}
+
