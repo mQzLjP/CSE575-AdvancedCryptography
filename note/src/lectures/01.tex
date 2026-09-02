@@ -48,7 +48,7 @@ In Attempt 2, we distinguish the honest parties by introducing a secret key $k$ 
 	\item Functionality and Security:
 	      \begin{itemize}
 		      \item Correctness: $\text{Dec}(k,\text{Enc}(k,m)) = m$ for all $m \in M$ and $k \in K$. This implies Alice and Bob must share the same key $k$.
-		      \item Security: Eve doesn't know about $k$, so he has to try every possible key $k' \in K$ to decode the ciphertext. However, different keys may lead to different messages, so Eve cannot be sure about the original message $m$.
+		      \item Security: Eve doesn't know about $k$, so he has to try every possible key $k' \in K$ to decode the ciphertext. However, different keys may lead to different messages, so Eve cannot be sure about the original message $m$. We'll formalize it in the next chapter.
 	      \end{itemize}
 \end{enumerate}
 \begin{note}
