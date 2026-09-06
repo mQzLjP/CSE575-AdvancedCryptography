@@ -4,54 +4,54 @@
 Last chapter, we introduced the concept and reason for an SKE.
 
 \begin{definition}[Symmetric Key Encryption (SKE)]
-  A \textbf{symmetric key encryption scheme} is a tuple of algorithms $(\Gen, \Enc, \Dec)$ such that:
-  \begin{itemize}
-    \item $\Gen$ is a probabilistic algorithm that outputs a key $k$ from the key space $\mathcal{K}$.
-    \item $\Enc$ is a probabilistic algorithm that takes a key $k$ and a message $m$ from the message space $\mathcal{M}$ and outputs a ciphertext $c$ from the ciphertext space $\mathcal{C}$.
-    \item $\Dec$ is a deterministic algorithm that takes a key $k$ and a ciphertext $c$ and outputs a message $m$ or an error symbol $\perp$.
-  \end{itemize}
-  The scheme must satisfy the correctness property: for all keys $k \in \mathcal{K}$ and messages $m \in \mathcal{M}$, we have $\Dec(k, \Enc(k, m)) = m$.
+	A \textbf{symmetric key encryption scheme} is a tuple of algorithms $(\Gen, \Enc, \Dec)$ such that:
+	\begin{itemize}
+		\item $\Gen$ is a probabilistic algorithm that outputs a key $k$ from the key space $\mathcal{K}$.
+		\item $\Enc$ is a probabilistic algorithm that takes a key $k$ and a message $m$ from the message space $\mathcal{M}$ and outputs a ciphertext $c$ from the ciphertext space $\mathcal{C}$.
+		\item $\Dec$ is a deterministic algorithm that takes a key $k$ and a ciphertext $c$ and outputs a message $m$ or an error symbol $\perp$.
+	\end{itemize}
+	The scheme must satisfy the correctness property: for all keys $k \in \mathcal{K}$ and messages $m \in \mathcal{M}$, we have $\Dec(k, \Enc(k, m)) = m$.
 \end{definition}
 
 For security, there're a lot of ways to define it. We might say the scheme is safe if the adversary cannot recover 90\% of the message, or if the adversary can't distinguish $c$ from random noise.
 Here we adopt Shannon's idea:
 
 \begin{remark}
-  The secrecy of a message means that the ciphertext should reveal nothing about the message that the adversary didn't already know.
+	The secrecy of a message means that the ciphertext should reveal nothing about the message that the adversary didn't already know.
 \end{remark}
 
 In other words, the ``posterior'' distribution of the message (conditioned on the ciphertext) should be the same as the ``prior'' distribution of the message. This leads to the following definition:
 
 \begin{definition}[Shannon Secrecy]
-  For any probability distribution $D$ over $\mathcal{M}$, an SKE scheme $(\Gen, \Enc, \Dec)$ is said to achieve \textbf{Shannon secrecy} if for every message $\overline{m} \in \mathcal{M}$ and every ciphertext $\overline{c}$ in the range of $\Enc(k, m)$ for some $k \gets \Gen$ and $m \gets D$, we have
-  \[
-    \Pr_{m\gets D, k \gets \Gen}[m = \overline{m} \mid \Enc(k,m) = \overline{c}] = \Pr_{m \gets D}[m = \overline{m}]
-  \]
+	For any probability distribution $D$ over $\mathcal{M}$, an SKE scheme $(\Gen, \Enc, \Dec)$ is said to achieve \textbf{Shannon secrecy} if for every message $\overline{m} \in \mathcal{M}$ and every ciphertext $\overline{c}$ in the range of $\Enc(k, m)$ for some $k \gets \Gen$ and $m \gets D$, we have
+	\[
+		\Pr_{m\gets D, k \gets \Gen}[m = \overline{m} \mid \Enc(k,m) = \overline{c}] = \Pr_{m \gets D}[m = \overline{m}]
+	\]
 \end{definition}
 
 Now we play with this definition:
 
 \begin{align*}
-  % \LHS &= \Pr_{m\gets D, k \gets \Gen}[m = \overline{m} \mid \Enc(k,m) = \overline{c}] \\
-    \LHS   &= \frac{\Pr_{m, k}[m = \overline{m} \wedge \Enc(k,\overline{m}) = \overline{c}]}{\Pr_{m, k}[\Enc(k,m) = \overline{c}]} \\
-       &= \frac{\Pr_{m}[m = \overline{m}] \cdot \Pr_{k}[\Enc(k,\overline{m}) = \overline{c}]}{\Pr_{m,k}[\Enc(k,m) = \overline{c}]} \quad \text{(by independence of $k$)} \\
-  % \RHS &= \Pr_{m}[m = \overline{m}]
+	% \LHS &= \Pr_{m\gets D, k \gets \Gen}[m = \overline{m} \mid \Enc(k,m) = \overline{c}] \\
+	\LHS & = \frac{\Pr_{m, k}[m = \overline{m} \wedge \Enc(k,\overline{m}) = \overline{c}]}{\Pr_{m, k}[\Enc(k,m) = \overline{c}]}                                                   \\
+	     & = \frac{\Pr_{m}[m = \overline{m}] \cdot \Pr_{k}[\Enc(k,\overline{m}) = \overline{c}]}{\Pr_{m,k}[\Enc(k,m) = \overline{c}]} \quad \text{(by independence of $m$ and $k$)} \\
+	% \RHS &= \Pr_{m}[m = \overline{m}]
 \end{align*}
 To let $\LHS = \RHS$, we need
 \[ \Pr_{k\gets \Gen}[\Enc(k,\overline{m}) = \overline{c}] = \Pr_{m\gets D,k\gets Gen}[\Enc(k,m) = \overline{c}] \]
 For a same distribution $D$, the RHS is a constant. So we can say that for any $\overline{m}$ and $\overline{c}$, the probability of $\overline{c}$ being the ciphertext of $\overline{m}$ is a constant. This means that for any two messages $m_0$ and $m_1$, the probability of $\overline{c}$ being the ciphertext of $m_0$ is equal to that of $m_1$. This leads to a second definition:
 
 \begin{definition}[Perfect Secrecy]
-  An SKE scheme $(\Gen, \Enc, \Dec)$ is said to achieve \textbf{perfect secrecy} if for every pair of messages $m_0, m_1 \in \mathcal{M}$ and every ciphertext $\overline{c}\in \mathcal C$, we have
-  \[
-    \Pr_{k\gets \Gen}[\Enc(k,m_0) = \overline{c}] = \Pr_{k\gets \Gen}[\Enc(k,m_1) = \overline{c}]
-  \]
+	An SKE scheme $(\Gen, \Enc, \Dec)$ is said to achieve \textbf{perfect secrecy} if for every pair of messages $m_0, m_1 \in \mathcal{M}$ and every ciphertext $\overline{c}\in \mathcal C$, we have
+	\[
+		\Pr_{k\gets \Gen}[\Enc(k,m_0) = \overline{c}] = \Pr_{k\gets \Gen}[\Enc(k,m_1) = \overline{c}]
+	\]
 \end{definition}
 
 In other words, the ciphertext has a same distribution regardless of the message.
 
 \begin{theorem}
-  Shannon secrecy is equivalent to perfect secrecy.
+	Shannon secrecy is equivalent to perfect secrecy.
 \end{theorem}
 Here we have already proved the $\implies$ direction. The other direction is left as an exercise.
 
@@ -60,25 +60,25 @@ Here we have already proved the $\implies$ direction. The other direction is lef
 The Shannon / perfect secrecy is achievable.
 
 \begin{construction}[One-time Pad (OTP) / Vernam Cipher]
-  Let $\mathcal{M} = \mathcal{K} = \mathcal{C} = \{0,1\}^n$ for some $n$. The one-time pad scheme is defined as follows:
-  \begin{itemize}
-    \item $\Gen$: Choose a key $k$ uniformly at random from $\{0,1\}^n$.
-    \item $\Enc(k, m)$: Compute the ciphertext $c = m \oplus k$, where $\oplus$ denotes bitwise XOR.
-    \item $\Dec(k, c)$: Compute the message $m = c \oplus k$.
-  \end{itemize}
+	Let $\mathcal{M} = \mathcal{K} = \mathcal{C} = \{0,1\}^n$ for some $n$. The one-time pad scheme is defined as follows:
+	\begin{itemize}
+		\item $\Gen$: Choose a key $k$ uniformly at random from $\{0,1\}^n$.
+		\item $\Enc(k, m)$: Compute the ciphertext $c = m \oplus k$, where $\oplus$ denotes bitwise XOR.
+		\item $\Dec(k, c)$: Compute the message $m = c \oplus k$.
+	\end{itemize}
 \end{construction}
 
 Correctness holds as $\forall k, m: \Dec(k, \Enc(k, m)) = (m \oplus k) \oplus k = m$.
 
 \begin{theorem}
-  The OTP scheme achieves perfect secrecy.
+	The OTP scheme achieves perfect secrecy.
 \end{theorem}
 \begin{proof}
-  Fix $m_0, m_1, \overline{c} \in \{0,1\}^n$. We have
-  \[
-    \Pr_{k\gets \Gen}[\Enc(k,m_0) = \overline{c}] = \Pr_{k\gets \Gen}[m_0 \oplus k = \overline{c}] = \Pr_{k\gets \Gen}[k = m_0 \oplus \overline{c}] = 2^{-n}
-  \]
-  Symmetrically, the same probability holds for $m_1$. Thus, the OTP scheme achieves perfect secrecy.
+	Fix $m_0, m_1, \overline{c} \in \{0,1\}^n$. We have
+	\[
+		\Pr_{k\gets \Gen}[\Enc(k,m_0) = \overline{c}] = \Pr_{k\gets \Gen}[m_0 \oplus k = \overline{c}] = \Pr_{k\gets \Gen}[k = m_0 \oplus \overline{c}] = 2^{-n}
+	\]
+	Symmetrically, the same probability holds for $m_1$. Thus, the OTP scheme achieves perfect secrecy.
 \end{proof}
 
 We even have a stronger result: regardless of the message distribution, the ciphertext is uniformly random over the choice of $k$.
@@ -87,26 +87,26 @@ We even have a stronger result: regardless of the message distribution, the ciph
 
 OTP has some downsides:
 \begin{itemize}
-  \item $\mathcal K = \mathcal M$, which means the key length must be at least as long as the message length. This is impractical for long messages.
-  \item The key can only be used once. Reusing the key for multiple messages compromises security, as 
-    \[ \Enc(k, m_0) \oplus \Enc(k, m_1) = (m_0 \oplus k) \oplus (m_1 \oplus k) = m_0 \oplus m_1 \]
-    which reveals information about the messages.
-  \end{itemize}
+	\item $\mathcal K = \mathcal M$, which means the key length must be at least as long as the message length. This is impractical for long messages.
+	\item The key can only be used once. Reusing the key for multiple messages compromises security, as
+	      \[ \Enc(k, m_0) \oplus \Enc(k, m_1) = (m_0 \oplus k) \oplus (m_1 \oplus k) = m_0 \oplus m_1 \]
+	      which reveals information about the messages.
+\end{itemize}
 
-  \begin{theorem}
-    In any Shannon / perfect secrecy scheme,
-    \[
-      |\mathcal K| \geq |\mathcal M|
-    \]
-  \end{theorem}
-  \begin{proof}
-    Suppose $|\mathcal K| < |\mathcal M|$.
+\begin{theorem}
+	In any Shannon / perfect secrecy scheme,
+	\[
+		|\mathcal K| \geq |\mathcal M|
+	\]
+\end{theorem}
+\begin{proof}
+	Suppose $|\mathcal K| < |\mathcal M|$.
 
-    Take $D$ to be uniform over $\mathcal M$. Suppose we get a ciphertext $\overline{c}$ in the range of $\Enc$.
+	Take $D$ to be uniform over $\mathcal M$. Suppose we get a ciphertext $\overline{c}$ in the range of $\Enc$.
 
-    Consider $P = \{\Dec(k,\overline{c}) : k \in \mathcal K\}$. Any message that can produce $\overline{c}$ must be in $P$, by correctness.
+	Consider $P = \{\Dec(k,\overline{c}) : k \in \mathcal K\}$. Any message that can produce $\overline{c}$ must be in $P$, by correctness.
 
-    However, as $|P| \leq |\mathcal K|$ (as each key produces at most one message), we have $|P| < |\mathcal M|$. Thus, there exists a message $m^* \in \mathcal M\setminus P$.
+	However, as $|P| \leq |\mathcal K|$ (as each key produces at most one message), we have $|P| < |\mathcal M|$. Thus, there exists a message $m^* \in \mathcal M\setminus P$.
 
-    This means that $\Pr_{m\gets D, k\gets \Gen}[m = m^* \mid \Enc(k,m) = \overline{c}] = 0$, while $\Pr_{m\gets D}[m = m^*] = 1/|\mathcal M| > 0$. This contradicts the definition of Shannon secrecy. Therefore, we must have $|\mathcal K| \geq |\mathcal M|$.
-  \end{proof}
+	This means that $\Pr_{m\gets D, k\gets \Gen}[m = m^* \mid \Enc(k,m) = \overline{c}] = 0$, while $\Pr_{m\gets D}[m = m^*] = 1/|\mathcal M| > 0$. This contradicts the definition of Shannon secrecy. Therefore, we must have $|\mathcal K| \geq |\mathcal M|$.
+\end{proof}
