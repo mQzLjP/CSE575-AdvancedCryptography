@@ -35,6 +35,23 @@
 
 \usepackage{forest}
 
+% cryptocode defines a command called \procedure (the "header + body" pseudocode
+% macro that is used throughout the cryptocode manual).  algorithm2e, loaded
+% further below, defines an *environment* with the same name via
+% \newenvironment, which refuses to overwrite an existing \procedure and aborts
+% with "LaTeX Error: Command \procedure already defined."
+% cryptocode uses a plain \gdef, so it silently wins (or, depending on the load
+% order, silently destroys algorithm2e's environment).
+% Fix: park cryptocode's \procedure in \notes@pc@procedure and free the name so
+% that algorithm2e can define its environment; the latter is then re-exposed
+% below as the `algprocedure' environment and \procedure is handed back to
+% cryptocode.  See the "Algorithm Env" section for the other half.
+\usepackage{cryptocode}
+\makeatletter
+\let\notes@pc@procedure\procedure
+\let\procedure\relax
+\makeatother
+
 % square bracket fix
 \DeclareSymbolFont{serifbrackets}{OT1}{cmr}{m}{n}
 \DeclareMathSymbol{(}{\mathopen}{serifbrackets}{`\(}
@@ -277,6 +294,16 @@
 \SetArgSty{textsl}
 \def\algocflineautorefname{Algorithm}
 \counterwithin{algocfline}{chapter}
+% algorithm2e's `procedure' environment is now defined without clashing with
+% cryptocode.  Expose it as `algprocedure' (its default argument, [htbp], and
+% \endprocedure are preserved) and give the name \procedure back to cryptocode.
+% `function', `procedure*' and `function*' are not affected by the clash and
+% keep their original names.
+\makeatletter
+\let\algprocedure\procedure
+\let\endalgprocedure\endprocedure
+\let\procedure\notes@pc@procedure
+\makeatother
 
 % Clear out the item autoref name
 \makeatletter
@@ -491,8 +518,8 @@
 	            \color{RawSienna!70!black}\sffamily\bfseries
 	            #1\@addpunct{.}]\ignorespaces
 	\begin{mdframed}[linewidth=2pt,rightline=false, topline=false, bottomline=false,linecolor=RawSienna, backgroundcolor=RawSienna!1]
-		}{%
-		\popQED\endtrivlist\@endpefalse
+}{%
+	\popQED\endtrivlist\@endpefalse
 	\end{mdframed}
 }
 \makeatother
