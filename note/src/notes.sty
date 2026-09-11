@@ -426,6 +426,12 @@
 \sisetup{locale = FR}
 % \renewcommand\vec[1]{\mathbf{#1}}
 \newcommand\mat[1]{\mathbf{#1}}
+% \vector is already defined by the LaTeX kernel (it is the picture
+% environment's \vector(x,y){len}), so it cannot be \newcommand'd
+% ("Command \vector already defined") and calling the kernel command with
+% braces gives "Use of \vector doesn't match its definition".
+% Redefine it; \DeclareRobustCommand keeps it usable in captions/titles.
+% \DeclareRobustCommand{\vector}[1]{\mathbf{#1}}
 
 
 % tikz

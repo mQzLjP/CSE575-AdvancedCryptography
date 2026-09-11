@@ -60,8 +60,8 @@ But the good news is they appear to be abundant in practice. Here we give some e
 \begin{eg}[Subset Sum]
 	$f_{ss}: (\mathbb Z_n)^n\times \{0,1\}^n \to (\mathbb Z_n)^n\times \ZZ_n$ with $N = 2^n$.
 
-	\[ f_{ss}(\vector{a}, \vector{b}) = (\vector{a}, s=\sum_{i=1}^n a_i b_i \bmod N) = (\vector{a}, \langle \vector{a}, \vector{b} \rangle \bmod N) \]
+	\[ f_{ss}(\vec{a}, \vec{b}) = (\vec{a}, s=\sum_{i=1}^n a_i b_i \bmod N) = (\vec{a}, \langle \vec{a}, \vec{b} \rangle \bmod N) \]
 
-	The inversion game is as follows. We choose $\vector{a}\in \ZZ_N^n, \vector{b}\gets \bit^n$, and give $y = (\vector{a}, s)$ to $\mathcal I$.
-	$\mathcal I$ outputs $(\vector{a}^*, \vector{b}^*)$ and wins if $f_{ss}(\vector{a}^*,\vector{b}^*) = y \iff \vector{a}^* = \vector{a}$ and $\langle \vector{a}^*, \vector{b}^* \rangle = s\bmod N$.
+	The inversion game is as follows. We choose $\vec{a}\in \ZZ_N^n, \vec{b}\gets \bit^n$, and give $y = (\vec{a}, s)$ to $\mathcal I$.
+	$\mathcal I$ outputs $(\vec{a}^*, \vec{b}^*)$ and wins if $f_{ss}(\vec{a}^*,\vec{b}^*) = y \iff \vec{a}^* = \vec{a}$ and $\langle \vec{a}^*, \vec{b}^* \rangle = s\bmod N$.
 \end{eg}
