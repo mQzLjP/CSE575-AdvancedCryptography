@@ -1,0 +1,67 @@
+\chapter{Computational Hardness and One-way Functions}
+
+Shannon secrecy is too hard to achieve in practice (a key longer than the message is not desirable). Now we relax those limits by restricting adversary ``feasible'', or ``efficient'' computation.
+
+\section{Computational Hardness}
+
+Here we introduce some conventions and paradigms:
+
+\begin{definition}[Feasible / Efficient Computation]
+	A computation is said to be \textbf{feasible} or \textbf{efficient} if it can be done in polynomial time, i.e. $O(n^c)$ for a constant $c$.
+	$n$ is called the \textbf{security parameter}.
+\end{definition}
+
+\begin{definition}[Tiny / Negligible Function]
+	A function $v(n)$ is said to be \textbf{tiny} or \textbf{negligible}, written as $v(n) = \negl(n)$, if $v(n) = O(1/n^c)$ for every constant $c$.
+\end{definition}
+
+For example, $1/2^n$ and $1/n^{\log n}$ are negligible, but $1/n^5$ is not.
+
+\section{One-way Functions}
+
+Intuitively, a one-way function is a function that is easy to compute but hard to invert. To formalize this, we'll do a one-wayness experiment:
+
+\procedureblock{One-wayness ``game''}{
+	\textbf{challenger} \< \< \textbf{adversary}\\
+	x \gets \{0,1\}^n \< \< \\
+	y = F(x) = f(x) \< \< \\
+	\< \sendmessageright*{y} \< \\
+	\< \sendmessageleft*{x^*\in \bit^n} \< \\
+	\text{Check if }f(x^*) = y \< \<
+}
+
+\begin{remark}
+	We don't simply check $x^* = x$ because there're collisions. Consider $f(x) = 0, \forall x\in\bit^n$. The probability of $x=x^*$ will have probability at most $1/2^n$. It's negligible, but such a function can't be considered secure.
+\end{remark}
+
+\begin{definition}[One-way Function (OWF)]
+	A function $f: \{0,1\}^* \to \{0,1\}^*$ is called a \textbf{one-way function} if:
+	\begin{itemize}
+		\item Easy to evaluate: there exists a polynomial-time algorithm $F$ that evaluates $f$: $F(x) = f(x) \forall x\in \{0,1\}^*$.
+		\item For any probabilistic polynomial-time (PPT) adversary $\mathcal I$,
+		      \[
+			      \adv_f^{\text{ow}}(\mathcal I) := \Pr_{x\gets\bit^n}[\mathcal I(1^n, y = f(x))\in f^{-1}(y)] = \negl(n)
+		      \]
+
+	\end{itemize}
+\end{definition}
+\begin{remark}
+	$1^n$ here gives a guarantee on the input size. Only by $1^n$ can we be sure that the adversary is poly-time in $n$ instead of something else. It's just a convention and we'll omit such notations in the future.
+\end{remark}
+
+Nowadays, scientists are working on PRGs and PRFs. They comply secure encryption with $|K| \ll |M|$, many-message security, and so on.
+
+\section{Does OWF Exist?}
+
+The bad news is that the existence of OWFs can indicate $\P \neq \NP$. As this question remains open by the time we take the course, we don't know about the existence of OWFs.
+
+But the good news is they appear to be abundant in practice. Here we give some examples:
+
+\begin{eg}[Subset Sum]
+	$f_{ss}: (\mathbb Z_n)^n\times \{0,1\}^n \to (\mathbb Z_n)^n\times \ZZ_n$ with $N = 2^n$.
+
+	\[ f_{ss}(\vector{a}, \vector{b}) = (\vector{a}, s=\sum_{i=1}^n a_i b_i \bmod N) = (\vector{a}, \langle \vector{a}, \vector{b} \rangle \bmod N) \]
+
+	The inversion game is as follows. We choose $\vector{a}\in \ZZ_N^n, \vector{b}\gets \bit^n$, and give $y = (\vector{a}, s)$ to $\mathcal I$.
+	$\mathcal I$ outputs $(\vector{a}^*, \vector{b}^*)$ and wins if $f_{ss}(\vector{a}^*,\vector{b}^*) = y \iff \vector{a}^* = \vector{a}$ and $\langle \vector{a}^*, \vector{b}^* \rangle = s\bmod N$.
+\end{eg}
